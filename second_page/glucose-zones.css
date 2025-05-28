@@ -1,0 +1,190 @@
+/* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body Layout */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom right, #cffafe, #b5d6ff);
+  color: #1f2937;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1.5rem;
+  line-height: 1.6;
+}
+
+/* Section Styling */
+section {
+  max-width: 1000px;
+  width: 100%;
+  margin-bottom: 4rem;
+  background: #ffffff;
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+/* Headings */
+h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #1e3a8a
+}
+
+/* Intro Text */
+.intro p {
+  font-size: 1.1rem;
+  color: #374151;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.intro ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style-type: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+}
+
+.intro ul li {
+  background: #f3f4f6;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  margin: 0.4rem 0;
+  font-size: 1rem;
+  width: fit-content;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* Tagline */
+.tagline {
+  font-size: 1.15rem;
+  color: #374151;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+/* Cards Layout */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+/* Card Structure */
+.card {
+  width: 270px;
+  height: 200px;
+  perspective: 1200px;
+  position: relative;
+  cursor: pointer;
+}
+
+.card-front,
+.card-back {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+  transition: transform 0.6s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.card-front {
+  transform: rotateY(0deg);
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  background: #f9fafb;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Card Themes */
+.card.normal .card-front {
+  background: linear-gradient(to right, #059669, #10b981);
+}
+
+.card.prediabetic .card-front {
+  background: linear-gradient(to right, #d97706, #fbbf24);
+}
+
+.card.diabetic .card-front {
+  background: linear-gradient(to right, #dc2626, #f87171);
+}
+
+/* Flip Animation */
+.card:hover .card-front {
+  transform: rotateY(180deg);
+}
+
+.card:hover .card-back {
+  transform: rotateY(360deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 90%;
+  }
+}
+
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2em 3em;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: transparent;
+}
+
+.arrow {
+  font-size: 2rem;
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.arrow:hover {
+  color: #1e40af;
+}
+
+.arrow.left {
+  margin-left: 1rem;
+}
+
+.arrow.right {
+  margin-right: 1rem;
+}
