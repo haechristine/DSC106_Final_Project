@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitoring Glucose – Diet and Glycemic Levels</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, sans-serif;
+      transition: background-color 1s ease;
+    }
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #6a859d;
+      color: white;
+      font-size: 2.5rem;
+      text-align: center;
+      transition: opacity 0.5s ease;
+    }
+    .hidden {
+      opacity: 0;
+    }
+    .visual-section {
+      padding: 4rem 2rem;
+      background-color: white;
+      transition: background-color 0.5s ease;
+    }
+    #viz-container {
+      border: 2px dashed #ccc;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    #scatterplot,
+    #previewPlot {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    .legend {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem auto;
+      max-width: 800px;
+      font-size: 0.95rem;
+      justify-content: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .legend-female {
+      background-color: #e67ea0;
+    }
+    .legend-male {
+      background-color: #69b3a2;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero" id="hero">
+    Monitoring Glucose – An Examination of How Diet Can Affect Glycemic Levels
+  </div>
+
+  <div class="visual-section" id="visSection">
+    <div id="viz-container">
+      <h3 style="text-align:center; margin-bottom: 1rem;">Glycemic Variability Scatter</h3>
+      <svg id="scatterplot" width="800" height="500"></svg>
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-color legend-female"></span>
+          Female
+        </div>
+        <div class="legend-item">
+          <span class="legend-color legend-male"></span>
+          Male
+        </div>
+      </div>
+      <div style="margin-top: 2rem;">
+        <h4>Glucose Time Series Preview</h4>
+        <svg id="previewPlot" width="800" height="200"></svg>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      const hero = document.getElementById('hero');
+      const scrollPos = window.scrollY;
+      const maxScroll = 400;
+      hero.style.opacity = 1 - Math.min(scrollPos / maxScroll, 1);
+    });
+
+    Promise.all([
+      d3.csv("Full_Dexcom_Summary__All_16_Participants_.csv"),
+      d3.json("glucose_time_series.json")
+    ]).then(([summary, seriesData]) => {
+      summary.forEach(d => {
+        d.participant_id = String(d.participant_id).padStart(3, "0");
+        d.mean_glucose = parseFloat(d.mean_glucose);
+        d.std_glucose = parseFloat(d.std_glucose);
+      });
+
+      const svg = d3.select("#scatterplot"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height"),
+            margin = { top: 60, right: 40, bottom: 60, left: 60 };
+
+      const x = d3.scaleLinear()
+                  .domain(d3.extent(summary, d => d.mean_glucose)).nice()
+                  .range([margin.left, width - margin.right]);
+
+      const y = d3.scaleLinear()
+                  .domain(d3.extent(summary, d => d.std_glucose)).nice()
+                  .range([height - margin.bottom, margin.top]);
+
+      svg.append("g")
+         .attr("transform", `translate(0,${height - margin.bottom})`)
+         .call(d3.axisBottom(x));
+
+      svg.append("text")
+         .attr("x", width / 2)
+         .attr("y", height - 10)
+         .attr("text-anchor", "middle")
+         .attr("fill", "black")
+         .text("Mean Glucose");
+
+      svg.append("g")
+         .attr("transform", `translate(${margin.left},0)`)
+         .call(d3.axisLeft(y));
+
+      svg.append("text")
+         .attr("transform", "rotate(-90)")
+         .attr("x", -height / 2)
+         .attr("y", 20)
+         .attr("text-anchor", "middle")
+         .attr("fill", "black")
+         .text("Glucose Std Dev");
+
+      svg.selectAll("circle.data-dot")
+         .data(summary)
+         .join("circle")
+         .attr("class", "data-dot")
+         .attr("cx", d => x(d.mean_glucose))
+         .attr("cy", d => y(d.std_glucose))
+         .attr("r", 6)
+         .attr("fill", d => d.Gender === "FEMALE" ? "#e67ea0" : "#69b3a2")
+         .attr("stroke", "#222")
+         .attr("stroke-width", 0.5)
+         .on("mouseover", (event, d) => drawPreview(d.participant_id));
+
+      const previewSVG = d3.select("#previewPlot"),
+            previewW = +previewSVG.attr("width"),
+            previewH = +previewSVG.attr("height");
+
+      function drawPreview(pid) {
+        const data = seriesData[pid].map(([ts, val]) => ({
+          timestamp: new Date(ts),
+          glucose: +val
+        }));
+
+        const xScale = d3.scaleTime()
+                         .domain(d3.extent(data, d => d.timestamp))
+                         .range([50, previewW - 20]);
+
+        const yScale = d3.scaleLinear()
+                         .domain(d3.extent(data, d => d.glucose)).nice()
+                         .range([previewH - 30, 10]);
+
+        previewSVG.selectAll("*").remove();
+
+        previewSVG.append("g")
+                  .attr("transform", `translate(0,${previewH - 30})`)
+                  .call(d3.axisBottom(xScale).ticks(6));
+
+        previewSVG.append("g")
+                  .attr("transform", `translate(50,0)`)
+                  .call(d3.axisLeft(yScale).ticks(5));
+
+        const line = d3.line()
+                       .x(d => xScale(d.timestamp))
+                       .y(d => yScale(d.glucose));
+
+        previewSVG.append("path")
+                  .datum(data)
+                  .attr("fill", "none")
+                  .attr("stroke", "#333")
+                  .attr("stroke-width", 2)
+                  .attr("d", line);
+      }
+    });
+  </script>
+</body>
+</html>

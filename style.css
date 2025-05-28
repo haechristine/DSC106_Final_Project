@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(to bottom, #a8bfc9 0%, #ffffff 100%);
+  min-height: 200vh;
+  transition: background 1s ease;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+header.scrolled {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+h1 {
+  font-size: 3em;
+  color: white;
+  text-shadow: 1px 1px 3px #333;
+  margin: 0;
+  text-align: center;
+}
+
+main {
+  margin-top: 100vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4em;
+  background-color: white;
+}
