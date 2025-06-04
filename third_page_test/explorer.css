@@ -1,0 +1,213 @@
+/* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Page Layout */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom right, #cffafe, #b5d6ff);
+  color: #1f2937;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1.5rem;
+  line-height: 1.6;
+}
+
+svg {
+  width: 100%;
+  height: auto;
+}
+
+
+/* Title */
+h1 {
+  font-size: 3.8rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Description */
+p {
+  text-align: center;
+  font-size: 1.4rem;
+  color: #374151;
+  margin-bottom: 2rem;
+}
+
+/* Chart */
+#chart-container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  width: 1300px;
+  margin: 0 auto 2rem auto;
+  height: 550px;
+}
+
+
+
+/* Quiz Container */
+.controls {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin: 1.5rem auto 1rem auto;
+  max-width: 600px; /* <- keeps button container tighter */
+}
+
+
+/* Quiz Buttons */
+.quiz-btn {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 1.75rem;
+  border: 2px solid #2563eb;
+  background-color: white;
+  color: #2563eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.quiz-btn:hover {
+  background-color: #eff6ff;
+  transform: translateY(-2px);
+}
+
+.quiz-btn.selected {
+  background-color: #2563eb;
+  color: white;
+}
+
+/* Next Button */
+#next-btn {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: block;
+  margin: 1.5rem auto 0;
+  position: relative;
+  z-index: 2;
+}
+
+#next-btn:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* Scroll Message */
+#scroll-msg {
+  font-size: 3rem;
+  font-weight: 600;
+  text-align: center;
+  color: #1e3a8a;
+  margin-top: 3rem;
+}
+
+/* Results Section */
+#results-section {
+  width: 100%;
+  max-width: 1100px;
+  margin: 3rem auto 4rem auto;
+  text-align: center;
+}
+
+
+#results-section h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 2.5rem;
+}
+
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  pointer-events: none;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  color: #374151;
+  line-height: 1.5;
+  max-width: 250px;
+  z-index: 10;
+}
+
+/* Food Labels (SVG text or dots) */
+.food-label {
+  font-size: 0.75rem;
+  fill: #f59e0b;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Nav Arrows (optional if used across all pages) */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2em 3em;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: transparent;
+}
+
+.arrow {
+  font-size: 2rem;
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.arrow:hover {
+  color: #1e40af;
+}
+
+.arrow.left {
+  margin-left: 1rem;
+}
+
+.arrow.right {
+  margin-right: 1rem;
+}
