@@ -16,12 +16,18 @@
     <div class="footer">Created by Daniel Zhu, Christine Law, and Brandon Chu</div>
   </div>
   <!-- Mascot Image Button -->
-<img id="mascot-button" src="assets/mash_default.png" alt="Mascot Button">
-<div id="mascot-message">🥔 I'm Mash! I'll be here to help you learn more about glucose trends!</div>
-
+  <!-- Mascot Image Button -->
+<div id="mascot-wrapper">
+  <div id="mascot-container">
+    <img id="mascot-button" src="assets/mash_default.png" alt="Mascot Button">
+    <div id="mascot-hint">⬅️ Click me!</div>
+    <div id="mascot-message">🥔 I'm Mash! I'll be here to help you learn more about glucose trends!</div>
+  </div>
+</div>
 <script>
   const mascot = document.getElementById('mascot-button');
   const message = document.getElementById('mascot-message');
+  const hint = document.getElementById('mascot-hint'); // add this
 
   let isPoked = false;
 
