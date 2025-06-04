@@ -15,7 +15,7 @@ const x = d3.scaleTime().range([0, width]);
 const y = d3.scaleLinear().range([height, 0]);
 
 const line = d3.line()
-  .x(d => x(new Date(d.datetime)))
+  .x(d => x(d.datetime))
   .y(d => y(d.glucose))
   .curve(d3.curveMonotoneX);
 
@@ -28,12 +28,15 @@ personSelect.addEventListener("change", () => loadData(personSelect.value));
 loadData("01");
 
 function loadData(personId) {
-  d3.json(`../data/${personId}_full_day.json`).then(data => {
+  d3.json(`../data/${personId}_full_day_time_only.json`).then(data => {
     data = data.filter(d => d.glucose && d.datetime);
-    data.forEach(d => d.datetime = new Date(d.datetime));
+    data.forEach(d => {
+      // Use dummy date so D3 can treat time as a Date object
+      d.datetime = d3.timeParse("%H:%M:%S")(d.datetime);
+    });
 
     x.domain(d3.extent(data, d => d.datetime));
-    y.domain([d3.min(data, d => d.glucose) - 10, d3.max(data, d => d.glucose) + 10]);
+    y.domain([60, 220]);
 
     xAxis.transition().duration(1000).call(
       d3.axisBottom(x).ticks(d3.timeHour.every(2)).tickFormat(d3.timeFormat("%-I %p"))
