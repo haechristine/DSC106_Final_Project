@@ -60,19 +60,46 @@ p {
   }
 }
 
-#mascot-button {
+/* Keep mascot fixed to bottom-right */
+#mascot-wrapper {
   position: fixed;
-  bottom: -10px;
+  bottom: 20px;
   right: 20px;
   width: 350px;
-  cursor: pointer;
   z-index: 1000;
 }
 
+/* Allow absolute positioning inside */
+#mascot-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Mascot image */
+#mascot-button {
+  width: 100%;
+  cursor: pointer;
+}
+
+/* "Click me!" hint relative to mascot */
+#mascot-hint {
+  position: absolute;
+  top: 90px;
+  right: 30px;
+  background-color: #fff;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+/* Message popup above mascot */
 #mascot-message {
-  position: fixed;
-  bottom: 275px;
-  right: 10px;
+  position: absolute;
+  bottom: 80%;
+  right: 0;
   background-color: #fff;
   border: 1px solid #ccc;
   padding: 10px;
@@ -80,7 +107,7 @@ p {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   display: none;
   max-width: 200px;
-  z-index: 1000;
   font-size: 0.9em;
   line-height: 1.4;
+  z-index: 1000;
 }
