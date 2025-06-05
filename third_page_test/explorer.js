@@ -13,7 +13,7 @@ const x = d3.scaleTime().range([0, width]);
 const y = d3.scaleLinear().range([height, 0]).domain([50, 230]);
 
 const line = d3.line()
-  .x(d => x(d.datetime))
+  .x(d => x(d.time))
   .y(d => y(d.glucose))
   .curve(d3.curveMonotoneX);
 
@@ -54,13 +54,13 @@ function loadNext() {
   const randomIndex = Math.floor(Math.random() * remainingProfiles.length);
   currentProfile = remainingProfiles[randomIndex];
 
-  d3.json(`../data/${currentProfile.id}_full_day_time_only.json`).then(data => {
-    data = data.filter(d => d.glucose && d.datetime);
+  d3.json(`../data/${currentProfile.id}_full_day.json`).then(data => {
+    data = data.filter(d => d.glucose && d.time);
     data.forEach(d => {
-      d.datetime = d3.timeParse("%H:%M:%S")(d.datetime);
+      d.time = d3.timeParse("%H:%M:%S")(d.time);
     });
 
-    x.domain(d3.extent(data, d => d.datetime));
+    x.domain(d3.extent(data, d => d.time));
     xAxis.transition().duration(1000)
       .call(d3.axisBottom(x).ticks(d3.timeHour.every(2)).tickFormat(d3.timeFormat("%-I %p")));
 
@@ -88,8 +88,8 @@ function loadNext() {
       .enter()
       .append("line")
       .attr("class", "food-line")
-      .attr("x1", d => x(d.datetime))
-      .attr("x2", d => x(d.datetime))
+      .attr("x1", d => x(d.time))
+      .attr("x2", d => x(d.time))
       .attr("y1", height / 2)
       .attr("y2", height / 2)
       .attr("stroke", "#f59e0b")
@@ -118,21 +118,21 @@ function loadNext() {
       .style("pointer-events", "all")
       .on("mousemove", function (event) {
         const [mx] = d3.pointer(event, this);
-        const bisect = d3.bisector(d => d.datetime).left;
+        const bisect = d3.bisector(d => d.time).left;
         const x0 = x.invert(mx);
         const i = bisect(data, x0, 1);
         const d0 = data[i - 1];
         const d1 = data[i];
-        const d = x0 - d0.datetime > d1.datetime - x0 ? d1 : d0;
+        const d = x0 - d0.time > d1.time - x0 ? d1 : d0;
 
         hoverDot
-          .attr("cx", x(d.datetime))
+          .attr("cx", x(d.time))
           .attr("cy", y(d.glucose))
           .style("opacity", 1);
 
         tooltip.transition().duration(100).style("opacity", 0.9);
         tooltip.html(
-          `<strong>${d3.timeFormat("%-I:%M %p")(d.datetime)}</strong><br/>
+          `<strong>${d3.timeFormat("%-I:%M %p")(d.time)}</strong><br/>
            Glucose: ${d.glucose} mg/dL` + (d.logged_food ? `<br/>🍽️ ${d.logged_food}` : "")
         )
         .style("left", (event.pageX + 10) + "px")
@@ -195,10 +195,10 @@ function showResults() {
 }
 
 function renderResultChart(canvasId, personId) {
-  d3.json(`../data/${personId}_full_day_time_only.json`).then(data => {
-    data = data.filter(d => d.glucose && d.datetime);
+  d3.json(`../data/${personId}_full_day.json`).then(data => {
+    data = data.filter(d => d.glucose && d.time);
     data.forEach(d => {
-      d.datetime = d3.timeParse("%H:%M:%S")(d.datetime);
+      d.time = d3.timeParse("%H:%M:%S")(d.time);
     });
 
     const svg = d3.select(`#${canvasId}`);
@@ -212,11 +212,11 @@ function renderResultChart(canvasId, personId) {
     const height = 400 - margin.top - margin.bottom;
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleTime().range([0, width]).domain(d3.extent(data, d => d.datetime));
+    const x = d3.scaleTime().range([0, width]).domain(d3.extent(data, d => d.time));
     const y = d3.scaleLinear().range([height, 0]).domain([50, 230]);
 
     const line = d3.line()
-      .x(d => x(d.datetime))
+      .x(d => x(d.time))
       .y(d => y(d.glucose))
       .curve(d3.curveMonotoneX);
 
@@ -256,8 +256,8 @@ function renderResultChart(canvasId, personId) {
       .enter()
       .append("line")
       .attr("class", "food-line")
-      .attr("x1", d => x(d.datetime))
-      .attr("x2", d => x(d.datetime))
+      .attr("x1", d => x(d.time))
+      .attr("x2", d => x(d.time))
       .attr("y1", height / 2)
       .attr("y2", height / 2)
       .attr("stroke", "#f59e0b")
@@ -283,22 +283,22 @@ function renderResultChart(canvasId, personId) {
       .style("pointer-events", "all")
       .on("mousemove", function (event) {
         const [mx] = d3.pointer(event, this);
-        const bisect = d3.bisector(d => d.datetime).left;
+        const bisect = d3.bisector(d => d.time).left;
         const x0 = x.invert(mx);
         const i = bisect(data, x0, 1);
         const d0 = data[i - 1];
         const d1 = data[i];
-        const d = x0 - d0.datetime > d1.datetime - x0 ? d1 : d0;
+        const d = x0 - d0.time > d1.time - x0 ? d1 : d0;
 
         hoverDot
-          .attr("cx", x(d.datetime))
+          .attr("cx", x(d.time))
           .attr("cy", y(d.glucose))
           .style("opacity", 1);
 
         d3.select(".tooltip")
           .style("opacity", 0.95)
           .html(
-            `<strong>${d3.timeFormat("%-I:%M %p")(d.datetime)}</strong><br/>
+            `<strong>${d3.timeFormat("%-I:%M %p")(d.time)}</strong><br/>
              Glucose: ${d.glucose} mg/dL` +
             (d.logged_food ? `<br/>🍽️ ${d.logged_food}` : "")
           )
