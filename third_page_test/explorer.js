@@ -74,9 +74,9 @@ const xAxis = chartGroup.append("g").attr("transform", `translate(0,${height})`)
 const yAxis = chartGroup.append("g").call(d3.axisLeft(y));
 
 const profiles = [
-  { id: "01", label: "normal" },
-  { id: "10", label: "prediabetic" },
-  { id: "04", label: "diabetic" }
+  { id: "01", label: "normal", hba1c: "5.3%" },
+  { id: "10", label: "prediabetic", hba1c: "6.2%" },
+  { id: "04", label: "diabetic", hba1c: "7.5%" }
 ];
 
 let currentProfile = null;
@@ -152,49 +152,6 @@ function loadNext() {
       .duration(800)
       .attr("y1", 0)
       .attr("y2", height);
-
-    // Tooltip overlay
-    chartGroup.selectAll(".hover-overlay").remove();
-    chartGroup.selectAll(".hover-dot").remove();
-
-    const hoverDot = chartGroup.append("circle")
-      .attr("class", "hover-dot")
-      .attr("r", 5)
-      .attr("fill", "#3b82f6")
-      .style("opacity", 0);
-
-    chartGroup.append("rect")
-      .attr("class", "hover-overlay")
-      .attr("width", width)
-      .attr("height", height)
-      .style("fill", "none")
-      .style("pointer-events", "all")
-      .on("mousemove", function (event) {
-        const [mx] = d3.pointer(event, this);
-        const bisect = d3.bisector(d => d.time).left;
-        const x0 = x.invert(mx);
-        const i = bisect(data, x0, 1);
-        const d0 = data[i - 1];
-        const d1 = data[i];
-        const d = x0 - d0.time > d1.time - x0 ? d1 : d0;
-
-        hoverDot
-          .attr("cx", x(d.time))
-          .attr("cy", y(d.glucose))
-          .style("opacity", 1);
-
-        tooltip.transition().duration(100).style("opacity", 0.9);
-        tooltip.html(
-          `<strong>${d3.timeFormat("%-I:%M %p")(d.time)}</strong><br/>
-           Glucose: ${d.glucose} mg/dL` + (d.logged_food ? `<br/>🍽️ ${d.logged_food}` : "")
-        )
-        .style("left", (event.pageX + 10) + "px")
-        .style("top", (event.pageY - 28) + "px");
-      })
-      .on("mouseout", () => {
-        tooltip.transition().duration(300).style("opacity", 0);
-        hoverDot.style("opacity", 0);
-      });
   });
 }
 
@@ -224,6 +181,7 @@ function showResults() {
   section.html("<h3>Results</h3>");
 
   guesses.forEach(({ id, guess, correctLabel }) => {
+    const profile = profiles.find(p => p.id === id);
     const container = section.append("div")
       .style("margin-bottom", "6rem")
       .style("padding", "1rem")
@@ -232,9 +190,7 @@ function showResults() {
       .style("box-shadow", "0 8px 24px rgba(0, 0, 0, 0.08)");
 
     container.append("p")
-      .html(`<strong>Participant ${id}</strong><br/>
-             Your guess: ${guess}<br/>
-             Correct label: ${correctLabel}`)
+      .html(`<strong>Participant ${id}</strong><br/>Your guess: ${guess}<br/>Correct label: ${correctLabel}`)
       .style("color", guess === correctLabel ? "#15803d" : "#b91c1c");
 
     const canvasId = `chart-${id}`;
@@ -243,11 +199,11 @@ function showResults() {
       .attr("width", 1000)
       .attr("height", 400);
 
-    renderResultChart(canvasId, id);
+    renderResultChart(canvasId, id, profile?.hba1c);
   });
 }
 
-function renderResultChart(canvasId, personId) {
+function renderResultChart(canvasId, personId, hba1c) {
   d3.json(`../data/${personId}_full_day.json`).then(data => {
     data = data.filter(d => d.glucose && d.time);
     data.forEach(d => {
@@ -255,7 +211,7 @@ function renderResultChart(canvasId, personId) {
     });
 
     const svg = d3.select(`#${canvasId}`);
-    svg.selectAll("*").remove(); // clear if reused
+    svg.selectAll("*").remove();
 
     svg.attr("viewBox", `0 0 1000 400`)
       .attr("preserveAspectRatio", "xMidYMid meet");
@@ -278,14 +234,20 @@ function renderResultChart(canvasId, personId) {
 
     g.append("g").call(d3.axisLeft(y));
 
-    // Healthy range background
-    g.append("rect")
-      .attr("x", 0)
-      .attr("y", y(100))
-      .attr("width", width)
-      .attr("height", y(70) - y(100))
-      .attr("fill", "#d1fae5")
-      .attr("opacity", 0.35);
+    const zoneDefs = [
+      { min: 70, max: 99, color: "#d1fae5" },
+      { min: 100, max: 125, color: "#fef3c7" },
+      { min: 126, max: 230, color: "#fee2e2" }
+    ];
+    zoneDefs.forEach(zone => {
+      g.append("rect")
+        .attr("x", 0)
+        .attr("y", y(zone.max))
+        .attr("width", width)
+        .attr("height", y(zone.min) - y(zone.max))
+        .attr("fill", zone.color)
+        .attr("opacity", 0.4);
+    });
 
     const path = g.append("path")
       .datum(data)
@@ -303,7 +265,6 @@ function renderResultChart(canvasId, personId) {
       .ease(d3.easeCubicInOut)
       .attr("stroke-dashoffset", 0);
 
-    // Food marker lines
     g.selectAll(".food-line")
       .data(data.filter(d => d.logged_food))
       .enter()
@@ -321,49 +282,14 @@ function renderResultChart(canvasId, personId) {
       .attr("y1", 0)
       .attr("y2", height);
 
-    // Hover dot
-    const hoverDot = g.append("circle")
-      .attr("r", 5)
-      .attr("fill", "#3b82f6")
-      .style("opacity", 0);
-
-    // Tooltip (reuses global one)
-    g.append("rect")
-      .attr("class", "hover-overlay")
-      .attr("width", width)
-      .attr("height", height)
-      .style("fill", "none")
-      .style("pointer-events", "all")
-      .on("mousemove", function (event) {
-        const [mx] = d3.pointer(event, this);
-        const bisect = d3.bisector(d => d.time).left;
-        const x0 = x.invert(mx);
-        const i = bisect(data, x0, 1);
-        const d0 = data[i - 1];
-        const d1 = data[i];
-        const d = x0 - d0.time > d1.time - x0 ? d1 : d0;
-
-        hoverDot
-          .attr("cx", x(d.time))
-          .attr("cy", y(d.glucose))
-          .style("opacity", 1);
-
-        d3.select(".tooltip")
-          .style("opacity", 0.95)
-          .html(
-            `<strong>${d3.timeFormat("%-I:%M %p")(d.time)}</strong><br/>
-             Glucose: ${d.glucose} mg/dL` +
-            (d.logged_food ? `<br/>🍽️ ${d.logged_food}` : "")
-          )
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 28) + "px");
-      })
-      .on("mouseout", () => {
-        d3.select(".tooltip").transition().duration(300).style("opacity", 0);
-        hoverDot.style("opacity", 0);
-      });
+    g.append("text")
+      .attr("x", width - 10)
+      .attr("y", 30)
+      .attr("text-anchor", "end")
+      .attr("fill", "#6b7280")
+      .attr("font-size", "1rem")
+      .text(`HbA1c: ${hba1c || 'N/A'}`);
   });
 }
 
-// Start quiz
 loadNext();

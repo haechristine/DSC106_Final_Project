@@ -25,40 +25,37 @@
     </p>
   </section>
 
-  <section class="zones">
-    <h2>What’s Your Glucose Zone?</h2>
-    <p class="tagline">
-      Learn how blood sugar levels are categorized—and why it matters.
-    </p>
-    <div class="cards">
-      <div class="card normal">
-        <div class="card-front">
-          <h3>Normal</h3>
-          <p>Fasting &lt; 100 mg/dL</p>
-        </div>
-        <div class="card-back">
-          <p>Healthy blood sugar regulation.<br>Stay active and eat balanced meals.</p>
-        </div>
+  <section class="mash-intro">
+    <div class="mash-content">
+      <div class="mash-image mash-hint-container">
+        <img id="mash-potato" src="/assets/mash_poke.png" alt="Mash the Mascot">
+        <div id="mash-hint" class="hidden-hint">🧠 Did you know? Glucose zones are just a snapshot—HbA1c tells the full story!</div>
       </div>
-      <div class="card prediabetic">
-        <div class="card-front">
-          <h3>Prediabetic</h3>
-          <p>Fasting 100–125 mg/dL</p>
-        </div>
-        <div class="card-back">
-          <p>You're at risk—moderate carbs, exercise regularly, and monitor trends.</p>
-        </div>
-      </div>
-      <div class="card diabetic">
-        <div class="card-front">
-          <h3>Diabetic</h3>
-          <p>Fasting ≥ 126 mg/dL</p>
-        </div>
-        <div class="card-back">
-          <p>Medical support needed. Tracking, lifestyle changes, and treatment are key.</p>
-        </div>
+      <div class="mash-text">
+        <h2>HbA1c vs. Glucose Zone 🥔</h2>
+        <p>
+          <strong>Glucose zones</strong> show your blood sugar at a moment in time, often while fasting (periods where nothing is eaten). In other words, even if your glucose levels fall within "diabetic", it is not enough to classify yourself as diabetic. On the other hand, <strong>HbA1c</strong> reflects your average blood sugar over several months and is the standard used to diagnose and monitor diabetes.
+        </p>
       </div>
     </div>
+  </section>  
+
+  <section class="zones">
+    <h2>Fasting Glucose Zones</h2>
+    <svg id="zone-graph"></svg>
+    
+    <div class="zone-bar-wrapper">
+      <div class="zone-bar-title">Understand Your Glucose Zones</div>
+      <div class="zone-bar">
+        <div class="zone-segment normal" data-tooltip="< 100 mg/dL — Healthy regulation">Normal</div>
+        <div class="zone-segment prediabetic" data-tooltip="100–125 mg/dL — At risk, improve diet and exercise">Prediabetic</div>
+        <div class="zone-segment diabetic" data-tooltip="≥ 126 mg/dL — High risk, seek treatment">Diabetic</div>
+      </div>
+    </div>
+
+    <p class="tagline">
+      These glucose level categorizations are based on fasting individuals — or individuals who haven't eaten for the past 8 - 12 hours. This is when blood sugar should be at the lowest, and serves as a metric of how the body handles glucose without the influence of food. This method is commonly used to screen for diabetes.  
+    </p>
   </section>
 
   <section class="zones">
@@ -97,12 +94,11 @@
     </div>
   </section>
 
-
-  <script src="glucose-zones.js"></script>
+  <script type="module" src="glucose_zones_enhanced.js"></script>
 
   <div class="page-nav">
-  <a href="../index.html" class="arrow left" title="Go to Home">&#8592;</a>
-  <a href="../third_page_test/explorer.html" class="arrow right" title="Go to Explorer">&#8594;</a>
+    <a href="../index.html" class="arrow left" title="Go to Home">&#8592;</a>
+    <a href="../third_page_test/explorer.html" class="arrow right" title="Go to Explorer">&#8594;</a>
   </div>
 </body>
 </html>
