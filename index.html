@@ -15,6 +15,32 @@
     <a href="second_page/glucose-zones.html" class="cta-button">Explore Trends</a>
     <div class="footer">Created by Daniel Zhu, Christine Law, and Brandon Chu</div>
   </div>
+  <!-- Mascot Image Button -->
+  <!-- Mascot Image Button -->
+<div id="mascot-wrapper">
+  <div id="mascot-container">
+    <img id="mascot-button" src="assets/mash_default.png" alt="Mascot Button">
+    <div id="mascot-hint">⬅️ Click me!</div>
+    <div id="mascot-message">🥔 I'm Mash! I'll be here to help you learn more about glucose trends! Click "Explore Trends" to continue browsing the website.</div>
+  </div>
+</div>
+<script>
+  const mascot = document.getElementById('mascot-button');
+  const message = document.getElementById('mascot-message');
+  const hint = document.getElementById('mascot-hint'); // add this
+
+  let isPoked = false;
+
+  mascot.addEventListener('click', () => {
+    isPoked = !isPoked;
+
+    // Set image based on state
+    mascot.src = isPoked ? 'assets/mash_poke.png' : 'assets/mash_default.png';
+
+    // Set message visibility based on same state
+    message.style.display = isPoked ? 'block' : 'none';
+  });
+</script>
 
   <script src="script.js"></script>
 </body>
