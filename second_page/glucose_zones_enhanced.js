@@ -38,7 +38,7 @@ function drawZones() {
 }
 
 function loadFastingParticipant() {
-  d3.json("../data/01_full_day_time_only.json").then(data => {
+  d3.json("../data/01_full_day.json").then(data => {
     const parseTime = d3.timeParse("%H:%M:%S");
     const fasting = data
       .filter(d => d.logged_food === "" && d.datetime >= "12:35:00" && d.datetime <= "20:55:00")
