@@ -56,7 +56,7 @@ function loadFastingParticipant() {
       return d.logged_food === "" && timeInHours >= 12.58 && timeInHours <= 20.92;
     });
 
-    x.domain(d3.extent(fasting, d => d.datetime));  // ✅ use 'datetime'
+    x.domain(d3.extent(fasting, d => d.datetime));  
 
     svg.append("g")
       .attr("transform", `translate(0,${height})`)
