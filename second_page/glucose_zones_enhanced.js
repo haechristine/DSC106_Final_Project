@@ -40,15 +40,23 @@ function drawZones() {
 function loadFastingParticipant() {
   d3.json("../data/01_full_day.json").then(data => {
     const parseTime = d3.timeParse("%H:%M:%S");
-    const fasting = data
-      .filter(d => d.logged_food === "" && d.datetime >= "12:35:00" && d.datetime <= "20:55:00")
-      .map(d => ({
-        datetime: parseTime(d.datetime),
+
+    const fasting = data.map(d => {
+      const parsed = parseTime(d.time); 
+      return parsed ? {
+        datetime: parsed,
         glucose: d.glucose,
         logged_food: d.logged_food
-      }));
+      } : null;
+    }).filter(d => {
+      if (!d) return false;
+      const hour = d.datetime.getHours();
+      const min = d.datetime.getMinutes();
+      const timeInHours = hour + min / 60;
+      return d.logged_food === "" && timeInHours >= 12.58 && timeInHours <= 20.92;
+    });
 
-    x.domain(d3.extent(fasting, d => d.datetime));
+    x.domain(d3.extent(fasting, d => d.datetime));  // ✅ use 'datetime'
 
     svg.append("g")
       .attr("transform", `translate(0,${height})`)
@@ -67,5 +75,6 @@ function loadFastingParticipant() {
       .attr("d", line);
   });
 }
+
 
 loadFastingParticipant();
